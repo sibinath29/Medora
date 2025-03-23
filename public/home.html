@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Medora</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Hamburger Menu Styles */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .menu-btn:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .menu-btn i {
+            font-size: 24px;
+            color: #0d6efd;
+            line-height: 1;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            height: 100vh;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .sidebar-header h2 {
+            color: #0d6efd;
+            margin: 0;
+            font-size: 24px;
+        }
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .nav-links li {
+            padding: 0;
+        }
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+        .nav-links i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 998;
+        }
+        .overlay.active {
+            display: block;
+        }
+        .welcome-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+            margin-bottom: 30px;
+        }
+        .card {
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            padding-top: 20px;
+        }
+        /* Notification Banner Styles */
+        .notification-banner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #0d6efd;
+        }
+        .notification-banner.show {
+            transform: translateX(0);
+        }
+        .notification-content {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+        }
+        .notification-icon {
+            font-size: 24px;
+            color: #0d6efd;
+            flex-shrink: 0;
+        }
+        .notification-text {
+            flex-grow: 1;
+        }
+        .notification-text h4 {
+            margin: 0 0 8px 0;
+            color: #1a1a1a;
+            font-size: 16px;
+        }
+        .notification-text p {
+            margin: 0 0 15px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-complete-profile {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-complete-profile:hover {
+            background: #0b5ed7;
+            color: white;
+        }
+        .btn-dismiss {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .btn-dismiss:hover {
+            color: #333;
+        }
+        .exercise-card, .yoga-card {
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .exercise-card:hover, .yoga-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .list-unstyled li {
+            margin-bottom: 8px;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-body img {
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Medora</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="home.html"><i class="fas fa-home"></i>Home</a></li>
+            <li><a href="view-profile.html"><i class="fas fa-user"></i>Profile</a></li>
+            <li><a href="#" id="sidebarLogout"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Add Notification Banner -->
+    <div class="notification-banner" id="profileNotification">
+        <div class="notification-content">
+            <div class="notification-icon">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <div class="notification-text">
+                <h4>Complete Your Profile</h4>
+                <p>Please complete your fitness profile to get personalized recommendations and track your progress.</p>
+                <div class="notification-actions">
+                    <a href="profile.html" class="btn-complete-profile">Complete Profile</a>
+                    <button class="btn-dismiss" id="dismissNotification">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1>Welcome to Medora</h1>
+                        <p class="lead">Your Fitness Journey Starts Here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">User Profile</h5>
+                            <p class="card-text">Update your profile information and settings.</p>
+                            <a href="view-profile.html" class="btn btn-primary">View/Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Session Management</h5>
+                            <p class="card-text">View and manage your active sessions.</p>
+                            <a href="#" class="btn btn-primary">Manage Sessions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercise Section -->
+            <h2 class="text-center mb-4">Featured Exercises</h2>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card exercise-card">
+                        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&auto=format" class="card-img-top" alt="Push-ups">
+                        <div class="card-body">
+                            <h5 class="card-title">Push-ups</h5>
+                            <p class="card-text">Build upper body strength with this classic exercise.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Builds chest muscles</li>
+                                <li><i class="fas fa-check text-success"></i> Strengthens core</li>
+                                <li><i class="fas fa-check text-success"></i> Improves posture</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="showExerciseDetails('pushups')">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card exercise-card">
+                        <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=500&auto=format" class="card-img-top" alt="Squats">
+                        <div class="card-body">
+                            <h5 class="card-title">Squats</h5>
+                            <p class="card-text">Perfect for building lower body strength and stability.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Builds leg muscles</li>
+                                <li><i class="fas fa-check text-success"></i> Improves balance</li>
+                                <li><i class="fas fa-check text-success"></i> Burns calories</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="showExerciseDetails('squats')">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card exercise-card">
+                        <img src="https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=500&auto=format" class="card-img-top" alt="Planks">
+                        <div class="card-body">
+                            <h5 class="card-title">Planks</h5>
+                            <p class="card-text">Strengthen your core with this effective isometric exercise.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Strengthens core</li>
+                                <li><i class="fas fa-check text-success"></i> Improves stability</li>
+                                <li><i class="fas fa-check text-success"></i> Reduces back pain</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="showExerciseDetails('planks')">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yoga Section -->
+            <h2 class="text-center mb-4">Yoga Poses</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card yoga-card">
+                        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&auto=format" class="card-img-top" alt="Downward Dog">
+                        <div class="card-body">
+                            <h5 class="card-title">Downward Dog</h5>
+                            <p class="card-text">A fundamental yoga pose that stretches and strengthens the entire body.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-om text-primary"></i> Stretches spine and hamstrings</li>
+                                <li><i class="fas fa-om text-primary"></i> Strengthens arms and legs</li>
+                                <li><i class="fas fa-om text-primary"></i> Calms the mind</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="showYogaDetails('downward-dog')">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card yoga-card">
+                        <img src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=500&auto=format" class="card-img-top" alt="Warrior Pose">
+                        <div class="card-body">
+                            <h5 class="card-title">Warrior Pose</h5>
+                            <p class="card-text">Build strength and stability with this powerful standing pose.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-om text-primary"></i> Builds leg strength</li>
+                                <li><i class="fas fa-om text-primary"></i> Opens hips and chest</li>
+                                <li><i class="fas fa-om text-primary"></i> Improves focus</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="showYogaDetails('warrior')">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card yoga-card">
+                        <img src="https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&auto=format" class="card-img-top" alt="Child's Pose">
+                        <div class="card-body">
+                            <h5 class="card-title">Child's Pose</h5>
+                            <p class="card-text">A restful pose that gently stretches the back and promotes relaxation.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-om text-primary"></i> Relieves stress</li>
+                                <li><i class="fas fa-om text-primary"></i> Stretches back muscles</li>
+                                <li><i class="fas fa-om text-primary"></i> Promotes relaxation</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="showYogaDetails('childs-pose')">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise Details Modal -->
+    <div class="modal fade" id="exerciseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exerciseModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="exerciseModalBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yoga Details Modal -->
+    <div class="modal fade" id="yogaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="yogaModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="yogaModalBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            return token;
+        }
+
+        // Hamburger menu functionality
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Handle logout
+        document.getElementById('sidebarLogout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        // Add this to your existing script
+        function checkProfileCompletion() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            fetch('http://localhost:3000/api/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success || !data.profile || !isProfileComplete(data.profile)) {
+                    showNotification();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking profile:', error);
+                showNotification(); // Show notification if we can't verify profile status
+            });
+        }
+
+        function isProfileComplete(profile) {
+            const requiredFields = ['fullName', 'dob', 'gender', 'height', 'weight', 'primaryGoal', 'activityLevel'];
+            return requiredFields.every(field => profile[field] && profile[field].toString().trim() !== '');
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('profileNotification');
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 1000);
+        }
+
+        // Dismiss notification
+        document.getElementById('dismissNotification').addEventListener('click', () => {
+            const notification = document.getElementById('profileNotification');
+            notification.classList.remove('show');
+            // Store dismissal in localStorage to prevent showing again in same session
+            localStorage.setItem('profileNotificationDismissed', 'true');
+        });
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            // Only show notification if it hasn't been dismissed
+            if (!localStorage.getItem('profileNotificationDismissed')) {
+                checkProfileCompletion();
+            }
+        });
+
+        // Exercise and Yoga details
+        const exerciseDetails = {
+            pushups: {
+                title: "Push-ups Guide",
+                content: `
+                    <h4>How to Do Push-ups</h4>
+                    <ol>
+                        <li>Start in a plank position with hands slightly wider than shoulders</li>
+                        <li>Keep your body in a straight line from head to heels</li>
+                        <li>Lower your body until your chest nearly touches the ground</li>
+                        <li>Push back up to the starting position</li>
+                    </ol>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Strengthens chest, shoulders, and triceps</li>
+                        <li>Improves core stability</li>
+                        <li>Enhances upper body strength</li>
+                        <li>No equipment needed</li>
+                    </ul>
+                    <h4>Tips</h4>
+                    <ul>
+                        <li>Keep your core tight throughout the movement</li>
+                        <li>Don't let your hips sag</li>
+                        <li>Breathe steadily - exhale as you push up</li>
+                    </ul>`
+            },
+            squats: {
+                title: "Squats Guide",
+                content: `
+                    <h4>How to Do Squats</h4>
+                    <ol>
+                        <li>Stand with feet shoulder-width apart</li>
+                        <li>Keep your chest up and core engaged</li>
+                        <li>Lower your body as if sitting back into a chair</li>
+                        <li>Keep knees in line with toes</li>
+                        <li>Return to standing position</li>
+                    </ol>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Builds leg and glute strength</li>
+                        <li>Improves core stability</li>
+                        <li>Enhances flexibility</li>
+                        <li>Boosts functional fitness</li>
+                    </ul>
+                    <h4>Tips</h4>
+                    <ul>
+                        <li>Keep your weight in your heels</li>
+                        <li>Don't let your knees cave inward</li>
+                        <li>Maintain good posture throughout</li>
+                    </ul>`
+            },
+            planks: {
+                title: "Planks Guide",
+                content: `
+                    <h4>How to Do Planks</h4>
+                    <ol>
+                        <li>Start in a push-up position or on your forearms</li>
+                        <li>Keep your body in a straight line</li>
+                        <li>Engage your core and glutes</li>
+                        <li>Hold the position</li>
+                    </ol>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Strengthens core muscles</li>
+                        <li>Improves posture</li>
+                        <li>Reduces back pain</li>
+                        <li>Enhances stability</li>
+                    </ul>
+                    <h4>Tips</h4>
+                    <ul>
+                        <li>Don't let your hips sag</li>
+                        <li>Keep breathing steadily</li>
+                        <li>Start with short holds and gradually increase duration</li>
+                    </ul>`
+            }
+        };
+
+        const yogaDetails = {
+            'downward-dog': {
+                title: "Downward Dog (Adho Mukha Svanasana)",
+                content: `
+                    <h4>How to Do Downward Dog</h4>
+                    <ol>
+                        <li>Start on hands and knees</li>
+                        <li>Lift your knees off the floor</li>
+                        <li>Straighten your legs and arms</li>
+                        <li>Press your heels toward the ground</li>
+                        <li>Create an inverted V-shape with your body</li>
+                    </ol>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Stretches the entire back of your body</li>
+                        <li>Strengthens arms and shoulders</li>
+                        <li>Improves circulation</li>
+                        <li>Calms the nervous system</li>
+                    </ul>
+                    <h4>Tips</h4>
+                    <ul>
+                        <li>Bend your knees if hamstrings are tight</li>
+                        <li>Keep arms shoulder-width apart</li>
+                        <li>Spread your fingers wide</li>
+                    </ul>`
+            },
+            warrior: {
+                title: "Warrior Pose (Virabhadrasana)",
+                content: `
+                    <h4>How to Do Warrior Pose</h4>
+                    <ol>
+                        <li>Step one foot back and turn it at an angle</li>
+                        <li>Bend your front knee over your ankle</li>
+                        <li>Keep back leg straight and strong</li>
+                        <li>Raise arms overhead</li>
+                        <li>Look forward and hold the pose</li>
+                    </ol>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Strengthens legs and core</li>
+                        <li>Opens hips and chest</li>
+                        <li>Improves balance and stability</li>
+                        <li>Builds mental focus</li>
+                    </ul>
+                    <h4>Tips</h4>
+                    <ul>
+                        <li>Keep front knee aligned with ankle</li>
+                        <li>Ground through back heel</li>
+                        <li>Breathe deeply and steadily</li>
+                    </ul>`
+            },
+            'childs-pose': {
+                title: "Child's Pose (Balasana)",
+                content: `
+                    <h4>How to Do Child's Pose</h4>
+                    <ol>
+                        <li>Kneel on the floor</li>
+                        <li>Sit back on your heels</li>
+                        <li>Fold forward, extending arms</li>
+                        <li>Rest forehead on the mat</li>
+                        <li>Breathe deeply and relax</li>
+                    </ol>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Gently stretches back muscles</li>
+                        <li>Relieves stress and anxiety</li>
+                        <li>Promotes relaxation</li>
+                        <li>Helps with digestion</li>
+                    </ul>
+                    <h4>Tips</h4>
+                    <ul>
+                        <li>Keep arms active</li>
+                        <li>Widen knees if more comfortable</li>
+                        <li>Use props for support if needed</li>
+                    </ul>`
+            }
+        };
+
+        function showExerciseDetails(exercise) {
+            const details = exerciseDetails[exercise];
+            const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
+            document.getElementById('exerciseModalTitle').textContent = details.title;
+            document.getElementById('exerciseModalBody').innerHTML = details.content;
+            modal.show();
+        }
+
+        function showYogaDetails(pose) {
+            const details = yogaDetails[pose];
+            const modal = new bootstrap.Modal(document.getElementById('yogaModal'));
+            document.getElementById('yogaModalTitle').textContent = details.title;
+            document.getElementById('yogaModalBody').innerHTML = details.content;
+            modal.show();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
